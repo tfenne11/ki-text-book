@@ -1,0 +1,16 @@
+{
+  "files": {
+    "main.css": "/swahili-textbook/static/css/main.073c9b0a.css",
+    "main.js": "/swahili-textbook/static/js/main.9f3a9b94.js",
+    "static/js/787.b772b096.chunk.js": "/swahili-textbook/static/js/787.b772b096.chunk.js",
+    "static/media/logo.svg": "/swahili-textbook/static/media/logo.6ce24c58023cc2f8fd88fe9d219db6c6.svg",
+    "index.html": "/swahili-textbook/index.html",
+    "main.073c9b0a.css.map": "/swahili-textbook/static/css/main.073c9b0a.css.map",
+    "main.9f3a9b94.js.map": "/swahili-textbook/static/js/main.9f3a9b94.js.map",
+    "787.b772b096.chunk.js.map": "/swahili-textbook/static/js/787.b772b096.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.073c9b0a.css",
+    "static/js/main.9f3a9b94.js"
+  ]
+}
