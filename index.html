@@ -11,10 +11,325 @@
       <title>React App</title>
       <script defer="defer" src="/swahili-textbook/static/js/main.9f3a9b94.js"></script>
       <link href="/swahili-textbook/static/css/main.073c9b0a.css" rel="stylesheet">
+      <style>
+         body {
+             font-family: Arial, sans-serif;
+             margin: 20px;
+             background-color: #f0f4f1;
+             color: #3e3e3e;
+         }
+ 
+         h1 {
+             text-align: center;
+             color: #3e3e3e;
+         }
+ 
+         .editor {
+             margin-bottom: 20px;
+             padding: 20px;
+             background-color: #e0d6c2;
+             border-radius: 8px;
+             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+             display: flex;
+             flex-direction: column;
+             gap: 20px;
+         }
+ 
+         .editor-section {
+             display: flex;
+             flex-direction: column;
+             gap: 15px;
+         }
+ 
+         .editor input, .editor button, .editor select {
+             padding: 10px;
+             border: 1px solid #a4a06d;
+             border-radius: 4px;
+             background-color: #f9f6f0;
+         }
+ 
+         .editor button {
+             background-color: #7a9a5f;
+             color: white;
+             border: none;
+             cursor: pointer;
+         }
+ 
+         .editor button:hover {
+             background-color: #658d43;
+         }
+ 
+         .flashcard {
+             border: 1px solid #9e9b79;
+             border-radius: 8px;
+             padding: 15px;
+             margin-bottom: 10px;
+             cursor: pointer;
+             transition: background-color 0.3s;
+             background-color: #ffffff;
+             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+         }
+ 
+         .flashcard:hover {
+             background-color: #f4f4e7;
+         }
+ 
+         .answer {
+             display: none;
+             margin-top: 10px;
+             color: #5d5a4e;
+         }
+ 
+         .delete-flashcard {
+             color: #d9534f;
+             cursor: pointer;
+             font-size: 0.9em;
+             text-decoration: underline;
+             margin-top: 10px;
+         }
+ 
+         .delete-flashcard:hover {
+             color: #c9302c;
+         }
+ 
+         .category {
+             font-weight: bold;
+             margin-top: 20px;
+             padding-top: 10px;
+             background-color: #f2e5d6;
+             border-radius: 6px;
+             padding: 10px 20px;
+             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+             position: relative;
+         }
+ 
+         .category button {
+             position: absolute;
+             top: 10px;
+             right: 10px;
+             background-color: #d9534f;
+             color: white;
+             border: none;
+             border-radius: 4px;
+             cursor: pointer;
+             padding: 5px 10px;
+             font-size: 0.8em;
+         }
+ 
+         .category button:hover {
+             background-color: #c9302c;
+         }
+ 
+         #flashcards-container {
+             padding: 10px;
+         }
+ 
+         .editor-section label {
+             font-weight: bold;
+             margin-bottom: 5px;
+         }
+ 
+         .editor-section select, .editor-section input {
+             width: 100%;
+         }
+ 
+         .editor-section button {
+             margin-top: 10px;
+         }
+ 
+         .category-controls, .flashcard-controls {
+             margin-bottom: 20px;
+             padding: 20px;
+             background-color: #f7f3e9;
+             border-radius: 8px;
+             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+         }
+ 
+         .category-controls h2, .flashcard-controls h2 {
+             margin-bottom: 10px;
+             color: #3e3e3e;
+         }
+ 
+     </style>
    </head>
-   <body>
-   	<p> HI MWALIMU!!!</p>
-      <noscript>You need to enable JavaScript to run this app.</noscript>
+   	<body>
+
+         <h1>Kadi ya Kusoma</h1>
+     
+         <div class="editor">
+             <input type="text" id="category" placeholder="Enter category name">
+             <button onclick="addCategory()">Add Category</button>
+             <select id="category-select">
+                 <option value="">Select Category</option>
+             </select>
+             <input type="text" id="question" placeholder="Enter question">
+             <input type="text" id="answer" placeholder="Enter answer">
+             <button onclick="addFlashcard()">Add Flashcard</button>
+             <div> </div>
+             <button onclick="showCardsByCategory()">Show Cards by Category</button>
+         </div>
+     
+         <div id="flashcards-container"></div>
+     
+         <script>
+             const categories = JSON.parse(localStorage.getItem('categories')) || {};
+     
+             function saveCategoriesToLocalStorage() {
+                 localStorage.setItem('categories', JSON.stringify(categories));
+             }
+     
+             function addCategory() {
+                 const categoryInput = document.getElementById('category');
+                 const categoryName = categoryInput.value.trim();
+                 const categorySelect = document.getElementById('category-select');
+     
+                 if (categoryName && !categories[categoryName]) {
+                     categories[categoryName] = [];
+     
+                     // Create a new option for the select dropdown
+                     const option = document.createElement('option');
+                     option.value = categoryName;
+                     option.textContent = categoryName;
+                     categorySelect.appendChild(option);
+     
+                     // Clear the input
+                     categoryInput.value = '';
+     
+                     // Save updated categories to localStorage
+                     saveCategoriesToLocalStorage();
+                 }
+             }
+     
+             function addFlashcard() {
+                 const categorySelect = document.getElementById('category-select');
+                 const selectedCategory = categorySelect.value;
+                 const questionInput = document.getElementById('question');
+                 const answerInput = document.getElementById('answer');
+                 const question = questionInput.value.trim();
+                 const answer = answerInput.value.trim();
+     
+                 if (selectedCategory && question && answer) {
+                     // Create the flashcard
+                     const flashcard = {
+                         question: question,
+                         answer: answer
+                     };
+     
+                     // Add the flashcard to the selected category
+                     categories[selectedCategory].push(flashcard);
+     
+                     // Render the updated category
+                     renderCategory(selectedCategory);
+     
+                     // Clear inputs
+                     questionInput.value = '';
+                     answerInput.value = '';
+     
+                     // Save updated categories to localStorage
+                     saveCategoriesToLocalStorage();
+                 }
+             }
+     
+             function renderCategory(category) {
+                 const flashcardsContainer = document.getElementById('flashcards-container');
+                 flashcardsContainer.innerHTML = '';
+     
+                 if (categories[category]) {
+                     const categoryHeader = document.createElement('div');
+                     categoryHeader.className = 'category';
+                     categoryHeader.innerHTML = `
+                         ${category}
+                         <button onclick="deleteCategory('${category}')">Delete Category</button>
+                     `;
+                     flashcardsContainer.appendChild(categoryHeader);
+     
+                     categories[category].forEach((flashcard, index) => {
+                         const flashcardDiv = document.createElement('div');
+                         flashcardDiv.className = 'flashcard';
+                         flashcardDiv.onclick = toggleAnswer;
+                         flashcardDiv.innerHTML = `
+                             <div><strong>Question:</strong> ${flashcard.question}</div>
+                             <div class="answer"><strong>Answer:</strong> ${flashcard.answer}</div>
+                             <div class="delete-flashcard" onclick="deleteFlashcard(event, '${category}', ${index})">Delete Flashcard</div>
+                         `;
+                         flashcardsContainer.appendChild(flashcardDiv);
+                     });
+                 }
+             }
+     
+             function showCardsByCategory() {
+                 const categorySelect = document.getElementById('category-select');
+                 const selectedCategory = categorySelect.value;
+     
+                 if (selectedCategory) {
+                     renderCategory(selectedCategory);
+                 } else {
+                     alert('Please select or create a category.');
+                 }
+             }
+     
+             function deleteCategory(categoryName) {
+                 // Remove category from the object
+                 delete categories[categoryName];
+     
+                 // Remove category from the select dropdown
+                 const categorySelect = document.getElementById('category-select');
+                 const options = categorySelect.options;
+                 for (let i = 0; i < options.length; i++) {
+                     if (options[i].value === categoryName) {
+                         categorySelect.remove(i);
+                         break;
+                     }
+                 }
+     
+                 // Save updated categories to localStorage
+                 saveCategoriesToLocalStorage();
+     
+                 // Clear the flashcards container
+                 document.getElementById('flashcards-container').innerHTML = '';
+             }
+     
+             function deleteFlashcard(event, category, index) {
+                 event.stopPropagation(); // Prevent the flashcard from toggling when clicking the delete button
+     
+                 // Remove flashcard from the category
+                 categories[category].splice(index, 1);
+     
+                 // Re-render the category
+                 renderCategory(category);
+     
+                 // Save updated categories to localStorage
+                 saveCategoriesToLocalStorage();
+             }
+     
+             function toggleAnswer(event) {
+                 const answerDiv = event.currentTarget.querySelector('.answer');
+                 if (answerDiv.style.display === 'none' || answerDiv.style.display === '') {
+                     answerDiv.style.display = 'block';
+                 } else {
+                     answerDiv.style.display = 'none';
+                 }
+             }
+     
+             // Load categories and render them when the page loads
+             window.onload = function() {
+                 const categorySelect = document.getElementById('category-select');
+     
+                 // Populate the category select dropdown
+                 Object.keys(categories).forEach(categoryName => {
+                     const option = document.createElement('option');
+                     option.value = categoryName;
+                     option.textContent = categoryName;
+                     categorySelect.appendChild(option);
+                 });
+     
+                 // Optionally, render the first category if desired
+                 if (categorySelect.options.length > 1) {
+                     categorySelect.selectedIndex = 1;
+                     renderCategory(categorySelect.value);
+                 }
+             }
+         </script>
       <div id="root"></div>
    </body>
 </html>
